@@ -37,8 +37,8 @@ CREATE TRIGGER prevent_role_change
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE
   TO authenticated
-  USING (auth.uid() = id)
-  WITH CHECK (auth.uid() = id);
+  USING (id::text = auth.uid()::text)
+  WITH CHECK (id::text = auth.uid()::text);
 
 -- ============================================
 -- FIX 2: Column-Level Security via Secure Views
