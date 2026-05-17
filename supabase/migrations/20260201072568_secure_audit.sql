@@ -131,7 +131,7 @@ CREATE POLICY "Admins can view all audit logs"
   ON audit_logs FOR SELECT
   TO authenticated
   USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() :: text AND role = 'admin')
   );
 
 -- ============================================
