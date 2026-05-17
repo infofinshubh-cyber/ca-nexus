@@ -9,6 +9,12 @@
 DROP POLICY IF EXISTS "Users can update own profile data" ON profiles;
 DROP POLICY IF EXISTS "Admins can update any profile" ON profiles;
 
+CREATE POLICY "Users can update own profile"
+  ON profiles FOR UPDATE
+  TO authenticated
+  USING (id::text = auth.uid()::text)
+  WITH CHECK (id::text = auth.uid()::text);
+
 -- Create a trigger function to prevent role changes
 CREATE OR REPLACE FUNCTION prevent_role_change()
 RETURNS TRIGGER AS $$
