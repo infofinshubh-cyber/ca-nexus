@@ -124,14 +124,14 @@ DROP POLICY IF EXISTS "Authenticated can insert audit logs" ON audit_logs;
 CREATE POLICY "Users can view own audit actions"
   ON audit_logs FOR SELECT
   TO authenticated
-  USING (user_id = auth.uid());
+  USING (user_id = auth.uid():: text);
 
 -- Admins can view all logs
 CREATE POLICY "Admins can view all audit logs"
   ON audit_logs FOR SELECT
   TO authenticated
   USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() :: text AND role = 'admin')
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid():: text AND role = 'admin')
   );
 
 -- ============================================
