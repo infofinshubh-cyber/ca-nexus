@@ -39,13 +39,6 @@ CREATE TRIGGER prevent_role_change
   FOR EACH ROW
   EXECUTE FUNCTION prevent_role_change();
 
--- Users can update their own profile (except role - handled by trigger)
-CREATE POLICY "Users can update own profile"
-  ON profiles FOR UPDATE
-  TO authenticated
-  USING (id::text = auth.uid()::text)
-  WITH CHECK (id::text = auth.uid()::text);
-
 -- ============================================
 -- FIX 2: Column-Level Security via Secure Views
 -- ============================================
