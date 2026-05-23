@@ -6,6 +6,7 @@
 -- OLD is not available in WITH CHECK - use trigger instead
 -- ============================================
 
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 DROP POLICY IF EXISTS "Users can update own profile data" ON profiles;
 DROP POLICY IF EXISTS "Admins can update any profile" ON profiles;
 
@@ -19,15 +20,17 @@ CREATE POLICY "Users can update own profile"
 CREATE OR REPLACE FUNCTION prevent_role_change()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- Only allow role change if user is admin
   IF NEW.role <> OLD.role THEN
     IF NOT EXISTS (
-      SELECT 1 FROM profiles 
-      WHERE id = auth.uid() AND role = 'admin'
+      SELECT 1
+      FROM profiles
+      WHERE id = auth.uid()
+      AND role = 'admin'
     ) THEN
       RAISE EXCEPTION 'Only admins can change roles';
     END IF;
   END IF;
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
